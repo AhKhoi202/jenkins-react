@@ -7,8 +7,8 @@ docker run -p 8080:8080 -p 50000:50000 \
   -d jenkins/jenkins:lts
 ```
 
-```sh 
-docker run -p 8080:8080 -p 50000:50000 `
+```sh
+docker run -p 8080:8080 -p 5173:5173 -p 50000:50000 `
   -v "${pwd}/jenkins_home:/var/jenkins_home" `
   -v "C:/Program Files/Docker/Docker/resources/bin/docker.exe:/usr/bin/docker" `
   --name jenkins `
@@ -36,4 +36,17 @@ sudo chmod 666 /var/run/docker.sock
 ```bash
 docker stop jenkins
 docker rm jenkins
+```
+
+```sh dang nhap container jenkins
+docker exec -it --user root jenkins bash # voi quyen root
+docker exec -it jenkins bash
+
+```
+
+```sh cai node
+apt-get update
+apt-get install -y curl
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt-get install -y nodejs
 ```
