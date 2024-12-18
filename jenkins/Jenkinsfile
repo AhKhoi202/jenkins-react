@@ -1,0 +1,35 @@
+pipeline {
+    agent {
+        docker {
+            image 'node:20'
+        }
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                dir('jenkins-test-react') {
+                    sh 'npm ci'
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                dir('jenkins-test-react') {
+                    sh 'npm run build'
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                // Assuming your Nginx container is named "react-nginx"
+                sh 'docker cp jenkins-test-react/dist react-nginx:/usr/share/nginx/html'
+                sh 'docker exec react-nginx nginx -s reload'
+            }
+        }
+    }
+}
