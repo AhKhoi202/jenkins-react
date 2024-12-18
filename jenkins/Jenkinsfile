@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Lấy mã nguồn từ SCM
+                checkout scm
+            }
+        }
+        stage('Install Dependencies') {
+            steps {
+                dir('jenkins-test-react') {
+                    // Cài đặt dependencies
+                    sh 'npm install'
+                }
+            }
+        }
+        stage('Run Dev Server') {
+            steps {
+                dir('jenkins-test-react') {
+                    // Kiểm tra nếu server cũ đang chạy, dừng lại
+                    sh '''
+                    if [ -f dev_server.pid ] && ps -p $(cat dev_server.pid) > /dev/null; then
+                        echo "Stopping existing dev server..."
+                        kill $(cat dev_server.pid)
+                        rm -f dev_server.pid
+                    fi
+                    '''
+                    // Chạy dev server và lưu PID
+                    sh 'nohup npm run dev > dev_server.log 2>&1 & echo $! > dev_server.pid'
+                }
+            }
+        }
+    }
+}
